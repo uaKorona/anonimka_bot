@@ -4,9 +4,9 @@ import { MESSAGES } from "./messeges";
 import { MessageTypes } from "./message-types.enum";
 import { botHelper } from "./bot-helper";
 
-const { anonimka_bot_token, anonimka_chat_id } = process.env;
+const { ANONIMKA_BOT_TOKEN, ANONIMKA_CHAT_ID } = process.env;
 
-export const bot: Telegraf<Context<Update>> = new Telegraf( anonimka_bot_token as string );
+export const bot: Telegraf<Context<Update>> = new Telegraf( ANONIMKA_BOT_TOKEN as string );
 
 bot.start( ( ctx ) => {
     ctx.replyWithHTML( MESSAGES.startMessage( ctx.from.first_name ) );
@@ -18,11 +18,11 @@ bot.use(async (ctx, next) => {
         return;
     }
 
-    return next(); // runs next middleware
+    return next(); // running next middleware
 })
 
 bot.on( [MessageTypes.photo, MessageTypes.video, MessageTypes.document], ( ctx ) => {
-    ctx.copyMessage( anonimka_chat_id as string );
+    ctx.copyMessage( ANONIMKA_CHAT_ID as string );
 } );
 
 bot.use(( ctx ) => {
