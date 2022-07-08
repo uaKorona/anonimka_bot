@@ -8,14 +8,14 @@ import LaunchOptions = Telegraf.LaunchOptions;
 
 const { ANONIMKA_BOT_TOKEN, ANONIMKA_CHAT_ID, HEROKU_APP_NAME } = process.env;
 // webhook settings
-const WEBHOOK_HOST = `https://${HEROKU_APP_NAME}.herokuapp.com:443`;
+const WEBHOOK_HOST = `https://${HEROKU_APP_NAME}.herokuapp.com`;
 // https://anonimka-avtorika-bot.herokuapp.com/
 const WEBHOOK_PATH = `webhook/${ANONIMKA_BOT_TOKEN}`;
 const WEBHOOK_URL = `${WEBHOOK_HOST}/${WEBHOOK_PATH}`;
 
 // webserver settings
 const WEBAPP_HOST = '0.0.0.0'
-const WEBAPP_PORT = 8000;
+const WEBAPP_PORT = 5000;
 const options = {
     webHook: {
         // Port to which you should bind is assigned to $PORT variable
@@ -28,7 +28,7 @@ const options = {
 };
 
 export const bot: Telegraf<Context<Update>> = new Telegraf( ANONIMKA_BOT_TOKEN as string );
-bot.telegram.setWebhook(WEBHOOK_URL)
+//bot.telegram.setWebhook(WEBHOOK_URL)
 
 bot.start( ( ctx ) => {
     ctx.replyWithHTML( MESSAGES.startMessage( ctx.from.first_name ) );
@@ -53,6 +53,7 @@ bot.use(( ctx ) => {
 
 const config: LaunchOptions = {
     webhook: {
+        hookPath: WEBHOOK_URL,
         port: WEBAPP_PORT
     }
 }
@@ -70,4 +71,4 @@ const config: LaunchOptions = {
 // Note: we do not need to pass in the cert, as it already provided
 // bot.setWebHook(`${url}/bot${TOKEN}`);
 
-bot.launch(config)
+bot.launch(config).then(res => console.log(res))
