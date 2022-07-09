@@ -47,4 +47,11 @@ const config: LaunchOptions = {
     }
 }
 
-bot.launch(config).then(res => console.log('bot lunch', WEBAPP_PORT, res))
+//bot.launch(config).then(res => console.log('bot lunch', WEBAPP_PORT, res))
+
+bot.launch({
+    webhook: {
+        domain: WEBHOOK_HOST,
+        port: Number(process.env.PORT),
+    }
+}).then(res => console.log('bot lunch', WEBAPP_PORT, res))
