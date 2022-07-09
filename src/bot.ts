@@ -8,12 +8,16 @@ import LaunchOptions = Telegraf.LaunchOptions;
 const { ANONIMKA_BOT_TOKEN, ANONIMKA_CHAT_ID, HEROKU_APP_NAME, PORT } = process.env;
 // webhook settings
 const WEBHOOK_HOST = `https://${HEROKU_APP_NAME}.herokuapp.com`;
-// https://anonimka-avtorika-bot.herokuapp.com/
 const WEBHOOK_PATH = `webhook/${ANONIMKA_BOT_TOKEN}`;
 const WEBHOOK_URL = `${WEBHOOK_HOST}/${WEBHOOK_PATH}`;
-const WEBAPP_PORT = parseInt(PORT as string) || 5000;
+const WEBAPP_PORT = parseInt(PORT as string, 10) || 5000;
 
 export const bot: Telegraf<Context<Update>> = new Telegraf( ANONIMKA_BOT_TOKEN as string );
+
+bot.catch((err, ctx) => {
+    console.log(err, ctx);
+    throw err;
+})
 
 bot.start( ( ctx ) => {
     ctx.replyWithHTML( MESSAGES.startMessage( ctx.from.first_name ) );
@@ -42,6 +46,5 @@ const config: LaunchOptions = {
         port: WEBAPP_PORT
     }
 }
-
 
 bot.launch(config).then(res => console.log('bot lunch', WEBAPP_PORT, res))
