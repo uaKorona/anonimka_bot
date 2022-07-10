@@ -1,23 +1,12 @@
-import { Context, Telegraf } from 'telegraf';
-import { Update } from 'typegram';
-import { MESSAGES } from "./messeges";
-import { MessageTypes } from "./message-types.enum";
-import { botHelper } from "./bot-helper";
-import LaunchOptions = Telegraf.LaunchOptions;
+import {Context, Telegraf} from 'telegraf';
+import {Update} from 'typegram';
+import {MESSAGES} from "./messeges";
+import {MessageTypes} from "./message-types.enum";
+import {botHelper} from "./bot-helper";
 
-const { ANONIMKA_BOT_TOKEN, ANONIMKA_CHAT_ID, HEROKU_APP_NAME, PORT } = process.env;
-// webhook settings
-const WEBHOOK_HOST = `https://${HEROKU_APP_NAME}.herokuapp.com`;
-const WEBHOOK_PATH = `webhook/${ANONIMKA_BOT_TOKEN}`;
-const WEBHOOK_URL = `${WEBHOOK_HOST}/${WEBHOOK_PATH}`;
-const WEBAPP_PORT = parseInt(PORT as string, 10) || 5000;
+const { ANONIMKA_BOT_TOKEN, ANONIMKA_CHAT_ID } = process.env;
 
 export const bot: Telegraf<Context<Update>> = new Telegraf( ANONIMKA_BOT_TOKEN as string );
-
-bot.catch((err, ctx) => {
-    console.log(err, ctx);
-    throw err;
-})
 
 bot.start( ( ctx ) => {
     ctx.replyWithHTML( MESSAGES.startMessage( ctx.from.first_name ) );
@@ -39,19 +28,3 @@ bot.on( [MessageTypes.photo, MessageTypes.video, MessageTypes.document], ( ctx )
 bot.use(( ctx ) => {
     ctx.replyWithHTML( MESSAGES.unSupportType() );
 });
-
-const config: LaunchOptions = {
-    webhook: {
-        hookPath: WEBHOOK_URL,
-        port: WEBAPP_PORT
-    }
-}
-
-//bot.launch(config).then(res => console.log('bot lunch', WEBAPP_PORT, res))
-
-bot.launch({
-    webhook: {
-        domain: WEBHOOK_HOST,
-        port: Number(process.env.PORT),
-    }
-}).then(res => console.log('bot lunch', WEBAPP_PORT, res))
