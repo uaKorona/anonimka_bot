@@ -4,7 +4,7 @@ import {MESSAGES} from "./messeges";
 import {MessageTypes} from "./message-types.enum";
 import {botHelper} from "./bot-helper";
 
-const { ANONIMKA_BOT_TOKEN, ANONIMKA_CHAT_ID } = process.env;
+const { ANONIMKA_BOT_TOKEN, ANONIMKA_CHAT_ID, ANONIMKA_LOG_CHAT_ID } = process.env;
 
 export const bot: Telegraf<Context<Update>> = new Telegraf( ANONIMKA_BOT_TOKEN as string );
 
@@ -22,9 +22,13 @@ bot.use(async (ctx, next) => {
 })
 
 bot.on( [MessageTypes.photo, MessageTypes.video, MessageTypes.document], ( ctx ) => {
-    ctx.copyMessage( ANONIMKA_CHAT_ID as string );
+
+    ctx.forwardMessage(ANONIMKA_LOG_CHAT_ID as string).then((ctx2) =>
+        bot.telegram.copyMessage( ANONIMKA_CHAT_ID as string, ANONIMKA_LOG_CHAT_ID as string, ctx2.message_id )
+    )
 } );
 
 bot.use(( ctx ) => {
     ctx.replyWithHTML( MESSAGES.unSupportType() );
+    ctx.forwardMessage(ANONIMKA_LOG_CHAT_ID as string);
 });
