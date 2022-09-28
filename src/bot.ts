@@ -1,34 +1,21 @@
 import {Context, Telegraf} from 'telegraf';
 import {Update} from 'typegram';
-import {MESSAGES} from "./messeges";
-import {MessageTypes} from "./message-types.enum";
-import {botHelper} from "./bot-helper";
+import {MessageTypes} from "./helpers/message-types.enum";
+import {BotCommands} from "./helpers/bot-commands";
+import {ENV_CONFIG} from "./env/env.config";
 
-const { ANONIMKA_BOT_TOKEN, ANONIMKA_CHAT_ID, ANONIMKA_LOG_CHAT_ID } = process.env;
+const botCommands = new BotCommands(ENV_CONFIG);
+const SUPPORT_TYPES = [MessageTypes.photo, MessageTypes.video, MessageTypes.document];
 
-export const bot: Telegraf<Context<Update>> = new Telegraf( ANONIMKA_BOT_TOKEN as string );
+export const bot: Telegraf<Context<Update>> = new Telegraf(ENV_CONFIG.BOT_TOKEN);
 
-bot.start( ( ctx ) => {
-    ctx.replyWithHTML( MESSAGES.startMessage( ctx.from.first_name ) );
-} );
+bot.start(botCommands.onStart);
 
-bot.use(async (ctx, next) => {
-    if (botHelper.isMessageFromChat( ctx )) {
-        // skip running next middlewares for messages from chat
-        return;
-    }
+bot.on('new_chat_members', botCommands.onNewChatMembers);
 
-    return next(); // running next middleware
-})
+bot.use(botCommands.skipMessageFromChat);
 
-bot.on( [MessageTypes.photo, MessageTypes.video, MessageTypes.document], ( ctx ) => {
+bot.on(SUPPORT_TYPES, botCommands.resendMessage);
 
-    ctx.forwardMessage(ANONIMKA_LOG_CHAT_ID as string).then((ctx2) =>
-        bot.telegram.copyMessage( ANONIMKA_CHAT_ID as string, ANONIMKA_LOG_CHAT_ID as string, ctx2.message_id )
-    )
-} );
+bot.use(botCommands.onUnSupportMessageType);
 
-bot.use(( ctx ) => {
-    ctx.replyWithHTML( MESSAGES.unSupportType() );
-    ctx.forwardMessage(ANONIMKA_LOG_CHAT_ID as string);
-});
