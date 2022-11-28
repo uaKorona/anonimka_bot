@@ -13,7 +13,7 @@ const {
 export const ENV_CONFIG: EnvInterface = {
     PRODUCTION: !!PRODUCTION,
     CHAT_ID: PRODUCTION ? ANONIMKA_CHAT_ID as string: TEST_CHAT_ID as string,
-    BOT_TOKEN: ANONIMKA_BOT_TOKEN as string,
+    BOT_TOKEN: PRODUCTION ? ANONIMKA_BOT_TOKEN as string : TEST_BOT_TOKEN as string,
     LOG_CHAT_ID: ANONIMKA_LOG_CHAT_ID as string,
     WELCOME_LINK: WELCOME_LINK as string
 }

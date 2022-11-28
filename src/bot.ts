@@ -13,7 +13,7 @@ bot.start(botCommands.onStart);
 
 bot.on('new_chat_members', botCommands.onNewChatMembers);
 
-bot.use(botCommands.skipMessageFromChat);
+bot.use(botCommands.onMessageFromChat);
 
 bot.on(SUPPORT_TYPES, botCommands.resendMessage);
 
