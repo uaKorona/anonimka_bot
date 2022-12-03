@@ -6,3 +6,5 @@
 
 # IDEs and editors
 /.idea
+
+.serverless

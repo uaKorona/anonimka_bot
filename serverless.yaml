@@ -1,0 +1,33 @@
+{
+  service: "anonimka-bot",
+  frameworkVersion: "3",
+
+  package: {
+    excludeDevDependencies: true,
+  },
+
+  provider: {
+    name: "aws",
+    runtime: "nodejs16.x",
+    region: "eu-west-1"
+  },
+
+  plugins: [
+    "serverless-plugin-typescript"
+  ],
+
+  functions: {
+    watermark: {
+      name: "anonimka-bot",
+      handler: "handler.anonimkaBot",
+      events: [
+        {
+          httpApi: {
+            path: "/telegraf",
+            method: "post",
+          },
+        },
+      ],
+    },
+  },
+}
